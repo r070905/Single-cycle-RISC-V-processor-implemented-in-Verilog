@@ -1,0 +1,22 @@
+# Vivado log files
+*.jou
+*.log
+*.str
+*.backup
+
+# Vivado generated folders
+*.cache
+*.gen
+*.runs
+*.sim
+*.ip_user_files
+*.Xil
+
+# Build files
+*.bit
+*.bin
+*.dcp
+
+# Simulation files
+*.wdb
+*.wcfg
