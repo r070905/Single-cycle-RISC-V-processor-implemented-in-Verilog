@@ -61,21 +61,15 @@ module Instruction_Mem(
     $display("DONE READMEMH");
  end
  
- always@(posedge clk /*or posedge reset*/)begin
-//  if(reset)begin
-//   for(i=0;i<64;i=i+1)I_Mem[i] <= 32'd0;
-//  end
-  
-  //else begin
+ always@(posedge clk)begin
+
    instruction_out <= I_Mem[read_address[7:2]];
-  //end
+ 
  end
 endmodule
 
 
 
-//Synchronous Write and Asynchronous Read(to keep it single cycle)
-// Think what if Rs = Rd
 module Register_file(
  input clk,
  input reset,
@@ -113,7 +107,7 @@ endmodule
 
 
 
-// always block so use "reg" for assigning
+
 module ImmGen(
  input [6:0]opcode,
  input [31:0]instruction,
@@ -124,8 +118,7 @@ always@(*)begin
  case(opcode)
    7'b0000011 : ImmExt = {{20{instruction[31]}}, instruction[31:20]}; //I-type
    7'b0100011 : ImmExt = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]}; //S-type
-   7'b1100011 : ImmExt = {{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25],instruction[11:8], 1'b0}; //SB-type (why is LSB 0) 
-   //Read about each instruction properly, what is does and how it executes
+   7'b1100011 : ImmExt = {{19{instruction[31]}}, instruction[31], instruction[7], instruction[30:25],instruction[11:8], 1'b0};  
    default : ImmExt = 32'd0;
  endcase
 end
@@ -163,17 +156,7 @@ module ALU_unit(
  output reg [31:0]ALU_Result,
  output reg zero
 );
-//always@(Control_in or A or B)begin -> sensitivity list, whenever any of these changes; * is better, what if we add another parameter c so.......
-/*always@(*)begin
- case(Control_in)
-  4'b0000: begin zero<=0; ALU_Result = A&B; end
-  4'b0001: begin zero<=0; ALU_Result = A|B; end
-  4'b0010: begin zero<=0; ALU_Result = A+B; end
-  4'b0110: begin if(A==B)zero<=1; else zero<=0; ALU_Result = A-B; end
- endcase
-end*/
 
-//better and cleaner (read more about zero flag and understand the avobe code)
 always@(*)begin
  case(Control_in)
   4'b0000: ALU_Result = A&B; 
@@ -211,18 +194,6 @@ end
 endmodule
 
 
-
-/*Use clk when:
-The block stores data
-The block has memory
-The output depends on previous cycle
-It is built using flip-flops
-
-🔵 No clk when:
-The block only computes
-It is pure logic
-Output depends only on current inputs
-*/
 
 module Data_Memory(
  input clk, reset,
